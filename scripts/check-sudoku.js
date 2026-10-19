@@ -1,4 +1,5 @@
-// Checks the puzzle maker and the English lesson files. Run: node scripts/check-sudoku.js
+// Checks the puzzle maker, the block rules, and the English lesson files.
+// Run: node scripts/check-sudoku.js
 
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -12,6 +13,17 @@ import {
   makeSolvedGrid,
   solveOne,
 } from '../js/sudoku-core.js';
+import {
+  SIZE,
+  anyPieceFits,
+  canPlace,
+  cellIndex,
+  clearLines,
+  dealPieces,
+  emptyGrid,
+  lineScore,
+  place,
+} from '../js/blocks-core.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 let failed = 0;
@@ -169,12 +181,67 @@ while (match) {
   urls.push(match[0].slice(1, -1));
   match = re.exec(sw);
 }
+assert(sw.indexOf("mum-games-v3") !== -1, 'service worker cache bumped');
+assert(sw.indexOf('./blocks.html') !== -1, 'service worker caches blocks page');
+assert(sw.indexOf('./js/blocks.js') !== -1 && sw.indexOf('./js/blocks-core.js') !== -1, 'service worker caches block scripts');
 assert(urls.length > 8, 'service worker lists files');
 urls.forEach(function (url) {
   if (url === './') return;
   const rel = url.replace(/^\.\//, '');
   assert(existsSync(join(root, rel)), 'missing cached file ' + url);
 });
+
+const blockGrid = emptyGrid();
+assert(blockGrid.length === SIZE * SIZE, 'block grid is 8x8');
+assert(canPlace(blockGrid, [[0, 0], [0, 1]], 0, 6), 'horizontal piece fits at the edge');
+assert(!canPlace(blockGrid, [[0, 0], [0, 1]], 0, 7), 'piece cannot hang off the board');
+const occupied = place(blockGrid, [[0, 0]], 0, 0, 1);
+assert(occupied && occupied[0] === 1, 'place writes a colour');
+assert(place(occupied, [[0, 0]], 0, 0, 2) === null, 'overlap is refused');
+
+const row = emptyGrid();
+for (let c = 0; c < SIZE; c++) row[cellIndex(0, c)] = 2;
+const clearedRow = clearLines(row);
+assert(clearedRow.rows.length === 1 && clearedRow.cols.length === 0, 'a full row clears');
+assert(clearedRow.grid.every(function (n) { return n === 0; }), 'cleared row is empty');
+
+const col = emptyGrid();
+for (let r = 0; r < SIZE; r++) col[cellIndex(r, 3)] = 3;
+const clearedCol = clearLines(col);
+assert(clearedCol.cols.length === 1 && clearedCol.rows.length === 0, 'a full column clears');
+
+const both = emptyGrid();
+for (let i = 0; i < SIZE; i++) {
+  both[cellIndex(1, i)] = 1;
+  both[cellIndex(i, 1)] = 1;
+}
+const clearedBoth = clearLines(both);
+assert(clearedBoth.rows.length === 1 && clearedBoth.cols.length === 1, 'row and column clear together');
+assert(lineScore(1) === SIZE && lineScore(2) === SIZE * 2 + 10, 'line score');
+
+const stuck = emptyGrid();
+for (let i = 0; i < stuck.length; i++) stuck[i] = 1;
+stuck[cellIndex(7, 7)] = 0;
+const stuckPieces = [
+  { cells: [[0, 0], [0, 1]], color: 1, used: false },
+  { cells: [[0, 0]], color: 2, used: true },
+  { cells: [[0, 0], [1, 0]], color: 3, used: false },
+];
+assert(!anyPieceFits(stuck, stuckPieces), 'game ends when no remaining piece fits');
+assert(anyPieceFits(stuck, [{ cells: [[0, 0]], color: 1, used: false }]), 'a single square still fits in a gap');
+
+let roll = 0;
+const dealt = dealPieces(function () {
+  roll += 0.17;
+  return roll % 1;
+});
+assert(dealt.length === 3, 'a deal is three pieces');
+dealt.forEach(function (piece) {
+  assert(piece.cells.length > 0 && piece.color >= 1 && piece.color <= 5 && piece.used === false, 'dealt piece shape');
+});
+const dealIds = dealt.map(function (piece) { return piece.id; });
+assert(new Set(dealIds).size === 3, 'a deal tries not to repeat a shape');
+console.log('blocks: clear, place, game over, deal');
 
 if (failed) {
   console.error(failed + ' check(s) failed');

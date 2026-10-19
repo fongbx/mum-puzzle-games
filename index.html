@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f3b7c6">
-  <meta name="description" content="给妈妈的离线小游戏：数独和学英语。没有广告。">
+  <meta name="description" content="给妈妈的离线小游戏：数独、方块和学英语。没有广告。">
   <meta name="format-detection" content="telephone=no">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -95,7 +95,7 @@
         <span class="chev" aria-hidden="true">›</span>
       </a>
 
-      <button type="button" class="game-card card-blocks card-soon" data-soon="方块" aria-disabled="true">
+      <a class="game-card card-blocks" href="./blocks.html">
         <span class="game-icon" aria-hidden="true">
           <svg viewBox="0 0 64 64" width="52" height="52">
             <rect x="12" y="40" width="40" height="12" rx="6" fill="#cbb4ea"/>
@@ -106,11 +106,11 @@
         <span class="game-text">
           <span class="game-zh">方块</span>
           <span class="game-en" lang="en">Blocks</span>
-          <span class="hint">即将推出</span>
-          <span class="hint-en" lang="en">Coming soon</span>
+          <span class="hint" id="blocks-hint">拖方块，消掉整行</span>
+          <span class="hint-en" id="blocks-hint-en" lang="en">Drag a piece, clear a line</span>
         </span>
-        <span class="chev" aria-hidden="true"></span>
-      </button>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
 
       <button type="button" class="game-card card-idioms card-soon" data-soon="成语" aria-disabled="true">
         <span class="game-icon" aria-hidden="true">

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3b7c6">
+  <meta name="description" content="方块。把方块放进棋盘，消掉整行。没有倒计时。">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="小游戏">
+  <title>方块 · 妈妈的小游戏</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./css/app.css">
+  <script src="./js/boot.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到内容</a>
+  <main id="main" class="app blocks-app" tabindex="-1">
+    <p id="old-browser" hidden>这个浏览器太旧了，请用 Chrome 打开。</p>
+    <header class="topbar">
+      <a class="back" href="./index.html">返回</a>
+      <h1>方块</h1>
+      <button id="contrast" type="button" aria-pressed="false">对比</button>
+    </header>
+    <p class="help">点一个方块，再点棋盘放下。也可以拖过去。<span lang="en">Tap a piece, then the board. Or drag it.</span></p>
+    <div class="score-row">
+      <p class="score-pill">
+        <span class="score-label">分数</span>
+        <strong id="score">0</strong>
+        <span class="hint-en" lang="en">Score</span>
+      </p>
+      <p class="score-pill">
+        <span class="score-label">最高</span>
+        <strong id="best">0</strong>
+        <span class="hint-en" lang="en">Best</span>
+      </p>
+    </div>
+    <div class="block-frame">
+      <div class="block-square">
+        <div class="block-board" id="board" role="group" aria-label="方块棋盘"></div>
+      </div>
+    </div>
+    <div class="tray" id="tray" role="group" aria-label="待放的方块"></div>
+    <p id="status" class="status" aria-live="polite">点一个方块</p>
+    <div class="tools block-tools">
+      <button type="button" id="undo">撤销<span class="btn-en" lang="en">Undo</span></button>
+      <button type="button" id="restart">重新开始<span class="btn-en" lang="en">Restart</span></button>
+    </div>
+  </main>
+
+  <div id="drag-float" class="drag-float" hidden></div>
+
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h2 id="modal-title"></h2>
+      <p id="modal-body"></p>
+      <p id="modal-en" class="lede" lang="en"></p>
+      <div class="modal-actions" id="modal-actions">
+        <button type="button" id="modal-cancel"></button>
+        <button type="button" id="modal-ok"></button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./js/blocks.js"></script>
+</body>
+</html>

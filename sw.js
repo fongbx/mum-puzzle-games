@@ -1,11 +1,12 @@
 // Saves the app on the phone. After the first online visit, pages open from this cache.
 // A newer visit updates the saved copies in the background; the next open uses them.
 
-var CACHE = 'mum-games-v2';
+var CACHE = 'mum-games-v3';
 var ASSETS = [
   './',
   './index.html',
   './sudoku.html',
+  './blocks.html',
   './english.html',
   './manifest.webmanifest',
   './favicon.svg',
@@ -16,6 +17,8 @@ var ASSETS = [
   './js/home.js',
   './js/sudoku-core.js',
   './js/sudoku.js',
+  './js/blocks-core.js',
+  './js/blocks.js',
   './js/english.js',
   './data/english/index.json',
   './data/english/unit-01-daily-life.json',

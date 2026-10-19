@@ -24,6 +24,19 @@ if (saveOk && !save.won) {
   }
 }
 
+const blocks = readJson(KEYS.blocks, null);
+const blocksHint = document.getElementById('blocks-hint');
+const blocksHintEn = document.getElementById('blocks-hint-en');
+const blocksSaved = blocks && blocks.v === 1 && Array.isArray(blocks.grid) && blocks.grid.length === 64;
+const blocksFresh = blocksSaved && (blocks.score | 0) === 0 && blocks.grid.every(function (n) { return !n; });
+if (blocksSaved && !blocks.over && !blocksFresh) {
+  blocksHint.textContent = '继续 · 分数 ' + (blocks.score | 0);
+  blocksHintEn.textContent = 'Continue · score ' + (blocks.score | 0);
+} else if (blocks && (blocks.best | 0) > 0) {
+  blocksHint.textContent = '最高 ' + (blocks.best | 0);
+  blocksHintEn.textContent = 'Best ' + (blocks.best | 0);
+}
+
 const stars = english.stars | 0;
 const best = english.bestStreak | 0;
 const lessonMap = english.lessons && typeof english.lessons === 'object' ? english.lessons : {};

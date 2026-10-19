@@ -2,7 +2,7 @@
   "id": "./",
   "name": "妈妈的小游戏",
   "short_name": "小游戏",
-  "description": "给妈妈的离线小游戏：数独和学英语。没有广告。",
+  "description": "给妈妈的离线小游戏：数独、方块和学英语。没有广告。",
   "lang": "zh-CN",
   "dir": "ltr",
   "start_url": "./index.html",
@@ -44,10 +44,16 @@
       "description": "Sudoku"
     },
     {
+      "name": "方块",
+      "short_name": "方块",
+      "url": "./blocks.html",
+      "description": "Blocks"
+    },
+    {
       "name": "学英语",
       "short_name": "学英语",
       "url": "./english.html",
-      "description": "English words"
+      "description": "English lessons"
     }
   ]
 }

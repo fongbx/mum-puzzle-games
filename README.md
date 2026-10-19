@@ -5,8 +5,9 @@ A small ad-free puzzle app for Mum in Singapore. It runs in the browser, can be 
 ## What's inside
 
 - **数独 Sudoku** — classic 9×9, Easy (简单) and Medium (中等). Notes, undo, clear, row / column / box highlight, and a mistake-marking switch. The phone makes a new puzzle itself, so it does not need the internet.
+- **方块 Blocks** — place one of three pieces on an 8×8 board. A full row or column clears. There is no timer. Drag a piece, or tap it and then tap the board. Score and best score stay on the phone, along with the current round and one undo.
 - **学英语 English lessons** — a short path of lessons. Unit 1 is Everyday Singapore (新加坡日常生活): the hawker centre, getting around, and the clinic. Each lesson shows a few words, then exercises (multiple choice, matching pairs, fill the blank). Wrong answers are just another chance to remember. Stars and a quiet streak stay on the phone.
-- **方块 Blocks** and **成语 Idioms** — buttons on the home screen for later. They say 即将推出 and do not open a broken page.
+- **成语 Idioms** — a button on the home screen for later. It says 即将推出 and does not open a broken page.
 
 English content is local JSON in `data/english/`. Unit 1 is `unit-01-daily-life.json`. The app does not use a flat word list.
 
@@ -38,7 +39,7 @@ Do this once while the phone is online, and wait until the home page has finishe
 2. Tap the **three dots** at the top right.
 3. Tap **Add to Home screen** or **Install app**.
 4. Confirm. An icon named **小游戏** appears on the home screen.
-5. Next time, open it from that icon. After this first visit, Sudoku and the English lessons work with no internet.
+5. Next time, open it from that icon. After this first visit, Sudoku, Blocks, and the English lessons work with no internet.
 
 If you change the app later, open it once while online, then open it again. The phone updates its saved copy in the background.
 
@@ -72,6 +73,7 @@ HTTPS is required for the offline install (localhost is fine for testing). Do no
 
 - `index.html` — home screen
 - `sudoku.html`, `js/sudoku.js`, `js/sudoku-core.js` — the game and the puzzle maker
+- `blocks.html`, `js/blocks.js`, `js/blocks-core.js` — the block / line-clear game
 - `english.html`, `js/english.js`, `data/english/` — English lesson path and unit files
 - `sw.js`, `manifest.webmanifest`, `icons/` — install and offline cache
 - `css/app.css` — colours and layout, including high contrast (对比)
@@ -134,6 +136,5 @@ Lesson ids and exercise ids should stay unique. The phone remembers finished les
 
 ## Not in v1
 
-- Block / line-clear game
 - 成语 game
 - Offline pronunciation (recorded audio or an on-device voice, without a third-party speech service)
