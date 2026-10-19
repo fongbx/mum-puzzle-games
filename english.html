@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3b7c6">
+  <meta name="description" content="学英语。一课一课来，可以离线玩。">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="小游戏">
+  <title>学英语 · 妈妈的小游戏</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./css/app.css">
+  <script src="./js/boot.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到内容</a>
+  <main id="main" class="app" tabindex="-1">
+    <p id="old-browser" hidden>这个浏览器太旧了，请用 Chrome 打开。</p>
+    <header class="topbar">
+      <a class="back" id="back" href="./index.html">返回</a>
+      <h1>学英语</h1>
+      <button id="contrast" type="button" aria-pressed="false">对比</button>
+    </header>
+    <p class="scoreline">
+      <span id="stars">星星 0</span>
+      <span id="streak" hidden></span>
+    </p>
+    <p id="loading-words">正在准备…</p>
+    <p id="load-error" class="banner" hidden>课程没有读出来。请再打开一次这个页面。</p>
+    <p id="path-note" class="soon-note" hidden role="status"></p>
+
+    <section id="path-view" hidden>
+      <div id="path"></div>
+    </section>
+
+    <section id="lesson-view" hidden>
+      <p class="filled" id="step-label"></p>
+      <div id="stage"></div>
+      <p class="feedback-line" id="live" aria-live="polite"></p>
+      <button type="button" id="primary-action" hidden></button>
+      <button type="button" id="secondary-action" class="secondary" hidden></button>
+    </section>
+  </main>
+  <script type="module" src="./js/english.js"></script>
+</body>
+</html>

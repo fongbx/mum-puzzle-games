@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3b7c6">
+  <meta name="description" content="给妈妈的离线小游戏：数独和学英语。没有广告。">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="小游戏">
+  <title>妈妈的小游戏</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./css/app.css">
+  <script src="./js/boot.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到内容</a>
+  <main id="main" class="app" tabindex="-1">
+    <p id="old-browser" hidden>这个浏览器太旧了，请用 Chrome 打开。</p>
+    <header class="topbar">
+      <span class="top-spacer" aria-hidden="true"></span>
+      <p class="brand">安静玩</p>
+      <button id="contrast" type="button" aria-pressed="false">对比</button>
+    </header>
+
+    <section class="hero">
+      <svg class="mascot" viewBox="0 0 120 120" aria-hidden="true">
+        <ellipse cx="60" cy="108" rx="28" ry="6" fill="#f3c9d4"/>
+        <circle cx="60" cy="64" r="38" fill="#ffe1ea"/>
+        <circle cx="60" cy="68" r="30" fill="#fff7f4"/>
+        <ellipse cx="42" cy="74" rx="6" ry="4" fill="#f5a8ba"/>
+        <ellipse cx="78" cy="74" rx="6" ry="4" fill="#f5a8ba"/>
+        <ellipse cx="48" cy="62" rx="4" ry="5" fill="#3c2a34"/>
+        <ellipse cx="72" cy="62" rx="4" ry="5" fill="#3c2a34"/>
+        <circle cx="49.4" cy="60.4" r="1.4" fill="#fff"/>
+        <circle cx="73.4" cy="60.4" r="1.4" fill="#fff"/>
+        <path d="M50 80c4 6 16 6 20 0" fill="none" stroke="#3c2a34" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="60" cy="26" r="5" fill="#f6d98a"/>
+        <circle cx="52" cy="22" r="4.5" fill="#f7b7c8"/>
+        <circle cx="68" cy="22" r="4.5" fill="#f7b7c8"/>
+        <circle cx="56" cy="16" r="4" fill="#f3c2d4"/>
+        <circle cx="64" cy="16" r="4" fill="#f3c2d4"/>
+      </svg>
+      <div>
+        <h1 class="page-title">妈妈的小游戏</h1>
+        <p class="lede" lang="en">Mum's little games</p>
+        <p class="tag">没有广告，可以慢慢玩</p>
+      </div>
+    </section>
+
+    <nav class="games" aria-label="游戏">
+      <a class="game-card card-sudoku" href="./sudoku.html">
+        <span class="game-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="52" height="52">
+            <rect x="6" y="6" width="16" height="16" rx="4" fill="#fff"/>
+            <rect x="24" y="6" width="16" height="16" rx="4" fill="#fff"/>
+            <rect x="42" y="6" width="16" height="16" rx="4" fill="#b7e4d2"/>
+            <rect x="6" y="24" width="16" height="16" rx="4" fill="#fff"/>
+            <rect x="24" y="24" width="16" height="16" rx="5" fill="#f7b7c8"/>
+            <rect x="42" y="24" width="16" height="16" rx="4" fill="#fff"/>
+            <rect x="6" y="42" width="16" height="16" rx="4" fill="#f6d98a"/>
+            <rect x="24" y="42" width="16" height="16" rx="4" fill="#fff"/>
+            <rect x="42" y="42" width="16" height="16" rx="4" fill="#fff"/>
+          </svg>
+        </span>
+        <span class="game-text">
+          <span class="game-zh">数独</span>
+          <span class="game-en" lang="en">Sudoku</span>
+          <span class="hint" id="sudoku-hint">简单或中等</span>
+          <span class="hint-en" id="sudoku-hint-en" lang="en">Easy or Medium</span>
+        </span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
+
+      <a class="game-card card-english" href="./english.html">
+        <span class="game-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="52" height="52">
+            <rect x="8" y="14" width="32" height="38" rx="10" fill="#fff"/>
+            <text x="24" y="40" text-anchor="middle" font-size="20" fill="#a24b62" font-family="serif">文</text>
+            <rect x="28" y="8" width="28" height="20" rx="10" fill="#f08aa8"/>
+            <text x="42" y="22" text-anchor="middle" font-size="12" fill="#fff" font-family="sans-serif">Aa</text>
+          </svg>
+        </span>
+        <span class="game-text">
+          <span class="game-zh">学英语</span>
+          <span class="game-en" lang="en">Lessons</span>
+          <span class="hint" id="english-hint">第1单元 · 新加坡日常生活</span>
+          <span class="hint-en" id="english-hint-en" lang="en">Everyday Singapore</span>
+        </span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
+
+      <button type="button" class="game-card card-blocks card-soon" data-soon="方块" aria-disabled="true">
+        <span class="game-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="52" height="52">
+            <rect x="12" y="40" width="40" height="12" rx="6" fill="#cbb4ea"/>
+            <rect x="16" y="26" width="32" height="12" rx="6" fill="#b094de"/>
+            <rect x="20" y="12" width="24" height="12" rx="6" fill="#9478cc"/>
+          </svg>
+        </span>
+        <span class="game-text">
+          <span class="game-zh">方块</span>
+          <span class="game-en" lang="en">Blocks</span>
+          <span class="hint">即将推出</span>
+          <span class="hint-en" lang="en">Coming soon</span>
+        </span>
+        <span class="chev" aria-hidden="true"></span>
+      </button>
+
+      <button type="button" class="game-card card-idioms card-soon" data-soon="成语" aria-disabled="true">
+        <span class="game-icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="52" height="52">
+            <circle cx="32" cy="32" r="18" fill="none" stroke="#e0a24a" stroke-width="3"/>
+            <text x="32" y="39" text-anchor="middle" font-size="20" fill="#c4842a" font-family="serif">成</text>
+          </svg>
+        </span>
+        <span class="game-text">
+          <span class="game-zh">成语</span>
+          <span class="game-en" lang="en">Idioms</span>
+          <span class="hint">即将推出</span>
+          <span class="hint-en" lang="en">Coming soon</span>
+        </span>
+        <span class="chev" aria-hidden="true"></span>
+      </button>
+    </nav>
+
+    <p id="soon-note" class="soon-note" hidden role="status"></p>
+
+    <footer class="footer">
+      <p>用 Chrome 打开后，点右上角三个点，再点「添加到主屏幕」。</p>
+      <p class="fine" lang="en">Chrome menu → Add to Home screen</p>
+      <p class="fine">第一次需要网络，之后可以离线玩。</p>
+    </footer>
+  </main>
+  <script type="module" src="./js/home.js"></script>
+</body>
+</html>
