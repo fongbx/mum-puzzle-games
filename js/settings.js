@@ -6,6 +6,7 @@ export const KEYS = {
   stats: 'mum.sudoku.stats',
   english: 'mum.english.progress',
   blocks: 'mum.blocks.game',
+  chengyu: 'mum.chengyu.progress',
 };
 
 export function readJson(key, fallback) {

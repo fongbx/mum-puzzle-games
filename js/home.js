@@ -57,6 +57,19 @@ if (current && current.lessonId && current.titleChinese && !(lessonMap[current.l
   hintEn.textContent = best >= 2 ? 'Best run ' + best : 'Stars ' + stars;
 }
 
+const chengyu = readJson(KEYS.chengyu, null);
+const chengyuHint = document.getElementById('chengyu-hint');
+const chengyuHintEn = document.getElementById('chengyu-hint-en');
+const chengyuDone = chengyu && chengyu.done && typeof chengyu.done === 'object' ? chengyu.done : {};
+const chengyuCount = Object.keys(chengyuDone).filter(function (id) { return chengyuDone[id]; }).length;
+if (chengyu && chengyu.current && chengyu.current.id && chengyu.current.label && !chengyuDone[chengyu.current.id]) {
+  chengyuHint.textContent = '继续 · ' + chengyu.current.label;
+  chengyuHintEn.textContent = 'Continue';
+} else if (chengyuCount > 0) {
+  chengyuHint.textContent = '已完成 ' + chengyuCount + ' 关';
+  chengyuHintEn.textContent = chengyuCount === 1 ? '1 level done' : chengyuCount + ' levels done';
+}
+
 const soonNote = document.getElementById('soon-note');
 document.querySelectorAll('.card-soon').forEach(function (btn) {
   btn.addEventListener('click', function () {

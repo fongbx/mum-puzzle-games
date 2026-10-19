@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f3b7c6">
-  <meta name="description" content="给妈妈的离线小游戏：数独、方块和学英语。没有广告。">
+  <meta name="description" content="给妈妈的离线小游戏：数独、方块、成语和学英语。没有广告。">
   <meta name="format-detection" content="telephone=no">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -112,7 +112,7 @@
         <span class="chev" aria-hidden="true">›</span>
       </a>
 
-      <button type="button" class="game-card card-idioms card-soon" data-soon="成语" aria-disabled="true">
+      <a class="game-card card-idioms" href="./chengyu.html">
         <span class="game-icon" aria-hidden="true">
           <svg viewBox="0 0 64 64" width="52" height="52">
             <circle cx="32" cy="32" r="18" fill="none" stroke="#e0a24a" stroke-width="3"/>
@@ -122,11 +122,11 @@
         <span class="game-text">
           <span class="game-zh">成语</span>
           <span class="game-en" lang="en">Idioms</span>
-          <span class="hint">即将推出</span>
-          <span class="hint-en" lang="en">Coming soon</span>
+          <span class="hint" id="chengyu-hint">点字填成语</span>
+          <span class="hint-en" id="chengyu-hint-en" lang="en">Fill the crossword</span>
         </span>
-        <span class="chev" aria-hidden="true"></span>
-      </button>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
     </nav>
 
     <p id="soon-note" class="soon-note" hidden role="status"></p>

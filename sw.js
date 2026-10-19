@@ -1,12 +1,13 @@
 // Saves the app on the phone. After the first online visit, pages open from this cache.
 // A newer visit updates the saved copies in the background; the next open uses them.
 
-var CACHE = 'mum-games-v3';
+var CACHE = 'mum-games-v4';
 var ASSETS = [
   './',
   './index.html',
   './sudoku.html',
   './blocks.html',
+  './chengyu.html',
   './english.html',
   './manifest.webmanifest',
   './favicon.svg',
@@ -19,9 +20,13 @@ var ASSETS = [
   './js/sudoku.js',
   './js/blocks-core.js',
   './js/blocks.js',
+  './js/chengyu-core.js',
+  './js/chengyu.js',
   './js/english.js',
   './data/english/index.json',
   './data/english/unit-01-daily-life.json',
+  './data/chengyu/idioms.json',
+  './data/chengyu/puzzles.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-192.png',

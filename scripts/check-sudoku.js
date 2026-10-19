@@ -24,6 +24,7 @@ import {
   lineScore,
   place,
 } from '../js/blocks-core.js';
+import { indexIdioms, inspectPuzzle, puzzleSolved } from '../js/chengyu-core.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 let failed = 0;
@@ -181,7 +182,9 @@ while (match) {
   urls.push(match[0].slice(1, -1));
   match = re.exec(sw);
 }
-assert(sw.indexOf("mum-games-v3") !== -1, 'service worker cache bumped');
+assert(sw.indexOf("mum-games-v4") !== -1, 'service worker cache bumped');
+assert(sw.indexOf('./chengyu.html') !== -1, 'service worker caches chengyu page');
+assert(sw.indexOf('./data/chengyu/idioms.json') !== -1 && sw.indexOf('./data/chengyu/puzzles.json') !== -1, 'service worker caches idiom files');
 assert(sw.indexOf('./blocks.html') !== -1, 'service worker caches blocks page');
 assert(sw.indexOf('./js/blocks.js') !== -1 && sw.indexOf('./js/blocks-core.js') !== -1, 'service worker caches block scripts');
 assert(urls.length > 8, 'service worker lists files');
@@ -242,6 +245,35 @@ dealt.forEach(function (piece) {
 const dealIds = dealt.map(function (piece) { return piece.id; });
 assert(new Set(dealIds).size === 3, 'a deal tries not to repeat a shape');
 console.log('blocks: clear, place, game over, deal');
+
+const idiomFile = JSON.parse(readFileSync(join(root, 'data/chengyu/idioms.json'), 'utf8'));
+const puzzleFile = JSON.parse(readFileSync(join(root, 'data/chengyu/puzzles.json'), 'utf8'));
+assert(idiomFile.schemaVersion === 1 && puzzleFile.schemaVersion === 1, 'chengyu schemaVersion');
+const idiomIds = new Set();
+idiomFile.idioms.forEach(function (idiom) {
+  assert(idiom.id && !idiomIds.has(idiom.id), 'idiom id ' + idiom.id);
+  idiomIds.add(idiom.id);
+  assert([...idiom.text].length === 4, idiom.id + ' is four characters');
+  assert(idiom.meaning && idiom.meaning.length >= 4, idiom.id + ' meaning');
+});
+const byId = indexIdioms(idiomFile.idioms);
+const counts = { easy: 0, medium: 0, hard: 0 };
+const puzzleIds = new Set();
+puzzleFile.puzzles.forEach(function (puzzle) {
+  assert(puzzle.id && !puzzleIds.has(puzzle.id), 'puzzle id ' + puzzle.id);
+  puzzleIds.add(puzzle.id);
+  counts[puzzle.difficulty] = (counts[puzzle.difficulty] || 0) + 1;
+  const built = inspectPuzzle(puzzle, byId);
+  assert(built.issues.length === 0, puzzle.id + ' ' + built.issues.join('; '));
+  const answers = new Map();
+  built.board.cells.forEach(function (cell) { answers.set(cell.key, cell.answer); });
+  assert(puzzleSolved(built.board, function (key) { return answers.get(key); }), puzzle.id + ' solves when filled');
+  const blanks = built.board.cells.filter(function (cell) { return !cell.given; }).length;
+  if (puzzle.difficulty === 'easy') assert(blanks <= 6, puzzle.id + ' easy stays generous');
+  if (puzzle.difficulty === 'hard') assert(built.board.entries.length >= 5 && blanks >= 10, puzzle.id + ' hard is a fuller grid');
+});
+assert(counts.easy === 4 && counts.medium === 4 && counts.hard === 4, 'four puzzles per difficulty ' + JSON.stringify(counts));
+console.log('chengyu: 4 easy, 4 medium, 4 hard');
 
 if (failed) {
   console.error(failed + ' check(s) failed');

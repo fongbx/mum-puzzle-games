@@ -7,7 +7,7 @@ A small ad-free puzzle app for Mum in Singapore. It runs in the browser, can be 
 - **数独 Sudoku** — classic 9×9, Easy (简单) and Medium (中等). Notes, undo, clear, row / column / box highlight, and a mistake-marking switch. The phone makes a new puzzle itself, so it does not need the internet.
 - **方块 Blocks** — place one of three pieces on an 8×8 board. A full row or column clears. There is no timer. Drag a piece, or tap it and then tap the board. Score and best score stay on the phone, along with the current round and one undo.
 - **学英语 English lessons** — a short path of lessons. Unit 1 is Everyday Singapore (新加坡日常生活): the hawker centre, getting around, and the clinic. Each lesson shows a few words, then exercises (multiple choice, matching pairs, fill the blank). Wrong answers are just another chance to remember. Stars and a quiet streak stay on the phone.
-- **成语 Idioms** — a button on the home screen for later. It says 即将推出 and does not open a broken page.
+- **成语 Idioms** — a crossword of real four-character idioms. Tap a blank, then tap a character. 简单, 中等, and 困难 each have four levels; the next level unlocks when the one before it is finished. A finished idiom shows a short meaning. Hint reveals one character.
 
 English content is local JSON in `data/english/`. Unit 1 is `unit-01-daily-life.json`. The app does not use a flat word list.
 
@@ -25,7 +25,7 @@ Then visit http://localhost:8080
 
 `npm start` does the same thing if you have npm. You do not need to install packages. There is no build step.
 
-Optional check for the puzzle maker and the English lessons:
+Optional check for Sudoku, Blocks, the English lessons, and the idiom crossword:
 
 ```bash
 node scripts/check-sudoku.js
@@ -39,7 +39,7 @@ Do this once while the phone is online, and wait until the home page has finishe
 2. Tap the **three dots** at the top right.
 3. Tap **Add to Home screen** or **Install app**.
 4. Confirm. An icon named **小游戏** appears on the home screen.
-5. Next time, open it from that icon. After this first visit, Sudoku, Blocks, and the English lessons work with no internet.
+5. Next time, open it from that icon. After this first visit, Sudoku, Blocks, idioms, and the English lessons work with no internet.
 
 If you change the app later, open it once while online, then open it again. The phone updates its saved copy in the background.
 
@@ -74,6 +74,7 @@ HTTPS is required for the offline install (localhost is fine for testing). Do no
 - `index.html` — home screen
 - `sudoku.html`, `js/sudoku.js`, `js/sudoku-core.js` — the game and the puzzle maker
 - `blocks.html`, `js/blocks.js`, `js/blocks-core.js` — the block / line-clear game
+- `chengyu.html`, `js/chengyu.js`, `js/chengyu-core.js`, `data/chengyu/` — the idiom crossword
 - `english.html`, `js/english.js`, `data/english/` — English lesson path and unit files
 - `sw.js`, `manifest.webmanifest`, `icons/` — install and offline cache
 - `css/app.css` — colours and layout, including high contrast (对比)
@@ -134,7 +135,41 @@ Exercises use one of three `type` values.
 
 Lesson ids and exercise ids should stay unique. The phone remembers finished lessons, the current lesson, stars, and the streak in `localStorage`. There is no account and no network call.
 
+## 成语 crossword files
+
+The bank is `data/chengyu/idioms.json`. The layouts are `data/chengyu/puzzles.json`. Both use `schemaVersion` 1. To add a level later, add any new idiom to the bank, then add a puzzle. Keep every idiom's characters and meaning checked by hand. `node scripts/check-sudoku.js` rejects a puzzle if a crossing disagrees, if an idiom is missing from the bank, or if a distractor is already used in that puzzle.
+
+An idiom looks like this:
+
+```json
+{
+  "id": "yixin-yiyi",
+  "text": "一心一意",
+  "meaning": "心思都放在一件事情上。",
+  "example": "她一心一意照顾家人。"
+}
+```
+
+`text` is exactly four characters. `meaning` is a short explanation in plain Chinese. `example` is optional.
+
+A puzzle looks like this:
+
+```json
+{
+  "id": "easy-1",
+  "difficulty": "easy",
+  "order": 1,
+  "entries": [
+    { "idiomId": "yixin-yiyi", "dir": "across", "row": 0, "col": 0 },
+    { "idiomId": "yifan-fengshun", "dir": "down", "row": 0, "col": 0 }
+  ],
+  "givens": [[0, 0], [2, 0]],
+  "distractors": ["马", "人"]
+}
+```
+
+`difficulty` is `easy` (简单), `medium` (中等), or `hard` (困难). `dir` is `across` or `down`. The idiom's first character sits at `row` and `col`. `givens` are cells that start filled. Each idiom needs at least one given cell and one blank. `distractors` are extra characters in the tray. They must not already appear in that puzzle. Within one difficulty, level 1 is open, and the next level unlocks when the previous one is finished. Progress stays in `localStorage`.
+
 ## Not in v1
 
-- 成语 game
 - Offline pronunciation (recorded audio or an on-device voice, without a third-party speech service)

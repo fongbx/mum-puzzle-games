@@ -1041,3 +1041,102 @@ html.hc .pip { box-shadow: inset 0 0 0 1px #000; }
 @media (prefers-reduced-motion: reduce) {
   .bcell.pop { animation: none; }
 }
+
+.cy-app .segment { grid-template-columns: 1fr 1fr 1fr; }
+
+.cy-board {
+  display: grid;
+  grid-gap: 6px;
+  width: 100%;
+  max-width: 320px;
+  margin: 8px auto;
+  touch-action: manipulation;
+}
+
+.cy-slot {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+}
+
+.cy-hole,
+.cy-cell {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+}
+
+.cy-cell {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 2px solid var(--line-strong);
+  border-radius: 14px;
+  background: #fff;
+  font-size: clamp(26px, 8vw, 40px);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.cy-cell.given { background: var(--peach); }
+.cy-cell.filled { background: #fff; }
+.cy-cell.selected { background: var(--selected); box-shadow: inset 0 0 0 3px var(--accent-deep); }
+.cy-cell.good { background: var(--mint); border-color: #8fceb0; }
+.cy-cell.soft { background: var(--butter); }
+
+.cy-meaning {
+  margin: 8px 0;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #f6e0e7;
+  border-radius: 18px;
+  text-align: center;
+}
+
+.cy-idiom { margin: 0; font-size: 28px; font-weight: 800; }
+.cy-def { margin: 4px 0 0; font-weight: 700; }
+.cy-ex, .cy-more { margin: 4px 0 0; color: var(--muted); font-size: 16px; }
+
+.cy-tray {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 4px 0 8px;
+}
+
+.cy-tools {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  padding-top: 6px;
+  background: rgba(255, 246, 241, 0.96);
+}
+
+html.hc .cy-tools { background: #fff; }
+
+.cy-char {
+  min-width: 56px;
+  min-height: 56px;
+  padding: 0 6px;
+  border: 2px solid var(--line-strong);
+  border-radius: 16px;
+  background: #fff;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+html.hc .cy-cell,
+html.hc .cy-char,
+html.hc .cy-meaning {
+  border-color: #000;
+}
+
+html.hc .cy-cell.given { background: #fff4cc; }
+html.hc .cy-cell.good { background: #e7ffe9; }
+html.hc .cy-cell.soft { background: #fff4cc; }
