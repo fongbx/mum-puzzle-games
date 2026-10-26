@@ -6,7 +6,7 @@ A small ad-free puzzle app for Mum in Singapore. It runs in the browser, can be 
 
 - **数独 Sudoku** — classic 9×9, Easy (简单) and Medium (中等). Notes, undo, clear, row / column / box highlight, and a mistake-marking switch. The phone makes a new puzzle itself, so it does not need the internet.
 - **方块 Blocks** — place one of three pieces on an 8×8 board. A full row or column clears. There is no timer. Hold a piece and it follows your finger, sitting just above it, with a preview of the nearest open spot. You can also tap a piece and then the board. Score and best score stay on the phone, along with the current round and one undo.
-- **学英语 English lessons** — a short path of lessons. Unit 1 is Everyday Singapore (新加坡日常生活): the hawker centre, getting around, and the clinic. Each lesson shows a few words, then exercises (multiple choice, matching pairs, fill the blank). Wrong answers are just another chance to remember. Stars and a quiet streak stay on the phone.
+- **学英语 English lessons** — a short path of lessons, plus 看图学词 (picture word cards). Unit 1 is Everyday Singapore (新加坡日常生活): the hawker centre, getting around, and the clinic. Each lesson shows a few words, then exercises (multiple choice, matching pairs, fill the blank). Wrong answers are just another chance to remember. Stars and a quiet streak stay on the phone. The picture cards are 15 packs (241 words): a big picture, a spoken UK word, two short games, and a gentle daily review.
 - **成语 Idioms** — a crossword of real four-character idioms. Tap a blank, then tap a character. 简单, 中等, and 困难 each have four levels; the next level unlocks when the one before it is finished. A finished idiom shows a short meaning. Hint reveals one character.
 
 English content is local JSON in `data/english/`. Unit 1 is `unit-01-daily-life.json`. The app does not use a flat word list.
@@ -25,7 +25,7 @@ Then visit http://localhost:8080
 
 `npm start` does the same thing if you have npm. You do not need to install packages. There is no build step.
 
-Optional check for Sudoku, Blocks, the English lessons, and the idiom crossword:
+Optional check for Sudoku, Blocks, the English lessons, the idiom crossword, and the picture word cards:
 
 ```bash
 node scripts/check-sudoku.js
@@ -39,7 +39,7 @@ Do this once while the phone is online, and wait until the home page has finishe
 2. Tap the **three dots** at the top right.
 3. Tap **Add to Home screen** or **Install app**.
 4. Confirm. An icon named **小游戏** appears on the home screen.
-5. Next time, open it from that icon. After this first visit, Sudoku, Blocks, idioms, and the English lessons work with no internet.
+5. Next time, open it from that icon. After this first visit, Sudoku, Blocks, idioms, the English lessons, and the picture word cards work with no internet.
 
 If you change the app later, open it once while online, then open it again. The phone updates its saved copy in the background.
 
@@ -76,6 +76,7 @@ HTTPS is required for the offline install (localhost is fine for testing). Do no
 - `blocks.html`, `js/blocks.js`, `js/blocks-core.js` — the block / line-clear game
 - `chengyu.html`, `js/chengyu.js`, `js/chengyu-core.js`, `data/chengyu/` — the idiom crossword
 - `english.html`, `js/english.js`, `data/english/` — English lesson path and unit files
+- `wordcards.html`, `js/wordcards.js`, `js/wordcards-core.js`, `data/english/wordcards.json`, `assets/wordcards/` — picture word cards
 - `sw.js`, `manifest.webmanifest`, `icons/` — install and offline cache
 - `css/app.css` — colours and layout, including high contrast (对比)
 
@@ -170,6 +171,23 @@ A puzzle looks like this:
 
 `difficulty` is `easy` (简单), `medium` (中等), or `hard` (困难). `dir` is `across` or `down`. The idiom's first character sits at `row` and `col`. `givens` are cells that start filled. Each idiom needs at least one given cell and one blank. `distractors` are extra characters in the tray. They must not already appear in that puzzle. Within one difficulty, level 1 is open, and the next level unlocks when the previous one is finished. Progress stays in `localStorage`.
 
-## Not in v1
+## Picture word cards
 
-- Offline pronunciation (recorded audio or an on-device voice, without a third-party speech service)
+The list is `data/english/wordcards.json` with `schemaVersion` 1. It has `packs`. Each pack has `id`, `name_zh`, `name_en`, and `words`. A word has `id`, `word`, `zh`, `example_en` (8 words or fewer), and `example_zh`. Packs open in any order. Progress stays in `localStorage` (`mum.wordcards.progress`): each word has a review box from 0 to 3. A right answer moves the box up. A wrong answer puts it back at 0 until the next day. Box 1 waits 1 day, box 2 waits 3 days, box 3 waits 7 days. 今日复习 mixes up to 10 words that are new or due.
+
+To add a photo pack, add the pack to that file and add three files for every new word:
+
+- `assets/wordcards/img/<id>.webp`
+- `assets/wordcards/thumb/<id>.webp`
+- `assets/wordcards/audio/uk/<id>.mp3`
+
+Then add those paths to the list in `sw.js`. Days (`pack12`) and numbers (`pack13`) are drawn in the page, so they need only the audio file. Clinic and Singapore pictures are SVG files in `assets/wordcards/img/`. Words that would be confusing side by side (headache, stomachache, pain, cough, dizzy) are kept out of the same question. The groups live in `js/wordcards-core.js`.
+
+`node scripts/check-wordcards.js` checks the words, the files, the questions, and the review boxes. `npm test` runs that together with the other checks.
+
+Pictures and recordings for the first 11 packs are from Word Atlas (CC BY 4.0). See `assets/wordcards/CREDITS.md`. Packs 12–15 were made for this app. Example sentences have no recording.
+
+## Not in this version
+
+- Spoken example sentences. The word itself plays from a saved recording. A sentence would need an offline voice on the phone, with no third-party speech service.
+- The lesson path still shows `audioHint` as spelling only. It does not play audio.

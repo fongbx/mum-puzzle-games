@@ -1,6 +1,7 @@
 // Checks the puzzle maker, the block rules, and the English lesson files.
 // Run: node scripts/check-sudoku.js
 
+import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -184,7 +185,9 @@ while (match) {
   urls.push(match[0].slice(1, -1));
   match = re.exec(sw);
 }
-assert(sw.indexOf("mum-games-v5") !== -1, 'service worker cache bumped');
+assert(sw.indexOf("mum-games-v6") !== -1, 'service worker cache bumped');
+assert(sw.indexOf('./wordcards.html') !== -1, 'service worker caches word cards');
+assert(sw.indexOf('./data/english/wordcards.json') !== -1, 'service worker caches word card list');
 assert(sw.indexOf('./chengyu.html') !== -1, 'service worker caches chengyu page');
 assert(sw.indexOf('./data/chengyu/idioms.json') !== -1 && sw.indexOf('./data/chengyu/puzzles.json') !== -1, 'service worker caches idiom files');
 assert(sw.indexOf('./blocks.html') !== -1, 'service worker caches blocks page');
@@ -296,6 +299,16 @@ puzzleFile.puzzles.forEach(function (puzzle) {
 });
 assert(counts.easy === 4 && counts.medium === 4 && counts.hard === 4, 'four puzzles per difficulty ' + JSON.stringify(counts));
 console.log('chengyu: 4 easy, 4 medium, 4 hard');
+
+const cardCheck = spawnSync(process.execPath, ['--test', 'scripts/check-wordcards.js'], {
+  cwd: root,
+  encoding: 'utf8',
+});
+if (cardCheck.stdout) process.stdout.write(cardCheck.stdout);
+if (cardCheck.status !== 0) {
+  if (cardCheck.stderr) process.stderr.write(cardCheck.stderr);
+  failed += 1;
+}
 
 if (failed) {
   console.error(failed + ' check(s) failed');

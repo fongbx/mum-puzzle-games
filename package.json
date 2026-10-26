@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8080",
-    "check": "node scripts/check-sudoku.js"
+    "check": "node scripts/check-sudoku.js",
+    "test": "node scripts/check-sudoku.js"
   }
 }

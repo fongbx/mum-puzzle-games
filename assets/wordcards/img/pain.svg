@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" stroke="#2b232c" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"><rect width="512" height="512" fill="#fff6f1" stroke="none"/>
+<rect x="40" y="210" width="300" height="92" rx="46" fill="#ffe3cf"/>
+<rect x="150" y="198" width="36" height="116" rx="8" fill="#fff"/>
+<rect x="210" y="198" width="36" height="116" rx="8" fill="#fff"/>
+<circle cx="300" cy="256" r="34" fill="#a32038" stroke="none"/>
+<polygon points="390,150 430,230 404,230 450,340 360,240 392,240" fill="#c45b78"/></svg>
