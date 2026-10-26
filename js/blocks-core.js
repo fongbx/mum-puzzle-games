@@ -59,6 +59,61 @@ export function cellIndex(row, col) {
   return row * SIZE + col;
 }
 
+export function pieceSpan(cells) {
+  let rows = 1;
+  let cols = 1;
+  for (let i = 0; i < cells.length; i++) {
+    if (cells[i][0] + 1 > rows) rows = cells[i][0] + 1;
+    if (cells[i][1] + 1 > cols) cols = cells[i][1] + 1;
+  }
+  return { rows: rows, cols: cols };
+}
+
+// How far (in cells) a drop can be from a free spot and still settle there.
+export const SNAP_REACH = 1.5;
+
+// row and col may be fractional. Returns the nearest free top-left, or null.
+export function snapAnchor(grid, cells, row, col, reach) {
+  const limit = reach == null ? SNAP_REACH : reach;
+  const span = Math.ceil(limit);
+  const r0 = Math.round(row);
+  const c0 = Math.round(col);
+  let best = null;
+  let bestDist = Infinity;
+  for (let r = r0 - span; r <= r0 + span; r++) {
+    for (let c = c0 - span; c <= c0 + span; c++) {
+      const dr = r - row;
+      const dc = c - col;
+      const dist = Math.sqrt(dr * dr + dc * dc);
+      if (dist > limit) continue;
+      if (!canPlace(grid, cells, r, c)) continue;
+      if (dist < bestDist - 1e-6) {
+        bestDist = dist;
+        best = { row: r, col: c };
+      }
+    }
+  }
+  return best;
+}
+
+// For a tap: keep the exact spot when it fits. Otherwise shift the piece
+// so it still covers the tapped cell, if a nearby free spot can do that.
+export function anchorCovering(grid, cells, row, col) {
+  if (canPlace(grid, cells, row, col)) return { row: row, col: col };
+  let best = null;
+  let bestDist = Infinity;
+  for (let i = 0; i < cells.length; i++) {
+    const r = row - cells[i][0];
+    const c = col - cells[i][1];
+    const dist = cells[i][0] * cells[i][0] + cells[i][1] * cells[i][1];
+    if (dist >= bestDist) continue;
+    if (!canPlace(grid, cells, r, c)) continue;
+    bestDist = dist;
+    best = { row: r, col: c };
+  }
+  return best;
+}
+
 export function canPlace(grid, cells, row, col) {
   for (let i = 0; i < cells.length; i++) {
     const r = row + cells[i][0];

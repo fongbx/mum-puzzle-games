@@ -1,7 +1,7 @@
 // Saves the app on the phone. After the first online visit, pages open from this cache.
 // A newer visit updates the saved copies in the background; the next open uses them.
 
-var CACHE = 'mum-games-v5';
+var CACHE = 'mum-games-v6';
 var ASSETS = [
   './',
   './index.html',

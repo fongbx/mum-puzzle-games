@@ -5,7 +5,7 @@ A small ad-free puzzle app for Mum in Singapore. It runs in the browser, can be 
 ## What's inside
 
 - **数独 Sudoku** — classic 9×9, Easy (简单) and Medium (中等). Notes, undo, clear, row / column / box highlight, and a mistake-marking switch. The phone makes a new puzzle itself, so it does not need the internet.
-- **方块 Blocks** — place one of three pieces on an 8×8 board. A full row or column clears. There is no timer. Drag a piece, or tap it and then tap the board. Score and best score stay on the phone, along with the current round and one undo.
+- **方块 Blocks** — place one of three pieces on an 8×8 board. A full row or column clears. There is no timer. Hold a piece and it follows your finger, sitting just above it, with a preview of the nearest open spot. You can also tap a piece and then the board. Score and best score stay on the phone, along with the current round and one undo.
 - **学英语 English lessons** — a short path of lessons, plus 看图学词 (picture word cards). Unit 1 is Everyday Singapore (新加坡日常生活): the hawker centre, getting around, and the clinic. Each lesson shows a few words, then exercises (multiple choice, matching pairs, fill the blank). Wrong answers are just another chance to remember. Stars and a quiet streak stay on the phone. The picture cards are 15 packs (241 words): a big picture, a spoken UK word, two short games, and a gentle daily review.
 - **成语 Idioms** — a crossword of real four-character idioms. Tap a blank, then tap a character. 简单, 中等, and 困难 each have four levels; the next level unlocks when the one before it is finished. A finished idiom shows a short meaning. Hint reveals one character.
 

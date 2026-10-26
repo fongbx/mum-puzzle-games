@@ -21,9 +21,11 @@ import {
   cellIndex,
   clearLines,
   dealPieces,
+  anchorCovering,
   emptyGrid,
   lineScore,
   place,
+  snapAnchor,
 } from '../js/blocks-core.js';
 import { indexIdioms, inspectPuzzle, puzzleSolved } from '../js/chengyu-core.js';
 
@@ -183,7 +185,7 @@ while (match) {
   urls.push(match[0].slice(1, -1));
   match = re.exec(sw);
 }
-assert(sw.indexOf("mum-games-v5") !== -1, 'service worker cache bumped');
+assert(sw.indexOf("mum-games-v6") !== -1, 'service worker cache bumped');
 assert(sw.indexOf('./wordcards.html') !== -1, 'service worker caches word cards');
 assert(sw.indexOf('./data/english/wordcards.json') !== -1, 'service worker caches word card list');
 assert(sw.indexOf('./chengyu.html') !== -1, 'service worker caches chengyu page');
@@ -247,7 +249,27 @@ dealt.forEach(function (piece) {
 });
 const dealIds = dealt.map(function (piece) { return piece.id; });
 assert(new Set(dealIds).size === 3, 'a deal tries not to repeat a shape');
-console.log('blocks: clear, place, game over, deal');
+const near = snapAnchor(emptyGrid(), [[0, 0]], 0.1, 0.2);
+assert(near && near.row === 0 && near.col === 0, 'a drop near a cell snaps to that cell');
+const rounded = snapAnchor(emptyGrid(), [[0, 0]], 2.1, 2.2);
+assert(rounded && rounded.row === 2 && rounded.col === 2, 'snap uses the nearest cell when it is free');
+const blocked = emptyGrid();
+blocked[cellIndex(2, 2)] = 1;
+const beside = snapAnchor(blocked, [[0, 0]], 2.1, 2.1);
+assert(beside && canPlace(blocked, [[0, 0]], beside.row, beside.col), 'snap moves off a filled cell');
+assert(!(beside.row === 2 && beside.col === 2), 'snap does not choose the filled cell');
+assert(Math.abs(beside.row - 2.1) <= 1.5 && Math.abs(beside.col - 2.1) <= 1.5, 'snap stays within reach');
+const wide = [[0, 0], [0, 1]];
+const nudged = snapAnchor(emptyGrid(), wide, 0, 7.4);
+assert(nudged && nudged.row === 0 && nudged.col === 6, 'a piece hanging off the edge slides back to a free spot');
+assert(snapAnchor(emptyGrid(), wide, 0, 7.9) === null, 'a drop too far from any free spot does not snap');
+const covered = anchorCovering(emptyGrid(), [[0, 0], [0, 1], [0, 2]], 0, 7);
+assert(covered && covered.row === 0 && covered.col === 5, 'a tap on the right edge still covers that cell');
+const pair = anchorCovering(emptyGrid(), [[0, 0], [0, 1]], 0, 7);
+assert(pair && pair.row === 0 && pair.col === 6, 'a two-cell piece shifts just enough to stay on the board');
+const exactTap = anchorCovering(emptyGrid(), [[0, 0], [0, 1], [0, 2]], 0, 2);
+assert(exactTap && exactTap.row === 0 && exactTap.col === 2, 'a tap that already fits stays put');
+console.log('blocks: clear, place, game over, deal, snap');
 
 const idiomFile = JSON.parse(readFileSync(join(root, 'data/chengyu/idioms.json'), 'utf8'));
 const puzzleFile = JSON.parse(readFileSync(join(root, 'data/chengyu/puzzles.json'), 'utf8'));
