@@ -384,8 +384,8 @@ function placeChar(ch) {
   fills[cell.key] = ch;
   selected = nextEmpty(cell.key);
   if (!finishIfNeeded(before)) {
-    if (fullButWrong()) say('这一条再看看');
-    else if (!statusEl.textContent || statusEl.textContent === '再点下面的字') say('放好了');
+    if (ch !== cell.answer || fullButWrong()) say('这个字再看看');
+    else say('放好了');
     persistPlay();
     paintPlay();
   }
