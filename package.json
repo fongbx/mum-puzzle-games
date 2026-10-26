@@ -1,0 +1,11 @@
+{
+  "name": "mum-puzzle-games",
+  "private": true,
+  "description": "Offline puzzle PWA for Mum. No build step and no dependencies.",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "check": "node scripts/check-sudoku.js",
+    "test": "node scripts/check-sudoku.js"
+  }
+}

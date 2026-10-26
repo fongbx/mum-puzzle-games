@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3b7c6">
+  <meta name="description" content="数独。简单和中等，可以离线玩。">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="小游戏">
+  <title>数独 · 妈妈的小游戏</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./css/app.css">
+  <script src="./js/boot.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到内容</a>
+  <main id="main" class="app sudoku-app" tabindex="-1">
+    <p id="old-browser" hidden>这个浏览器太旧了，请用 Chrome 打开。</p>
+    <header class="topbar">
+      <a class="back" href="./index.html">返回</a>
+      <h1>数独</h1>
+      <button id="contrast" type="button" aria-pressed="false">对比</button>
+    </header>
+    <p class="help">点一格，再点下面的数字 · <span lang="en">Tap a cell, then a number</span></p>
+    <div class="diff-row">
+      <div class="segment" role="radiogroup" aria-label="难度">
+        <button type="button" id="diff-easy" role="radio" aria-checked="true">简单</button>
+        <button type="button" id="diff-medium" role="radio" aria-checked="false">中等</button>
+      </div>
+      <button type="button" id="new-game">新题目</button>
+    </div>
+    <p id="filled" class="filled">已填 0 / 0</p>
+    <p id="done-banner" class="banner" hidden>这题完成了。要再玩，按「新题目」。</p>
+    <div class="board-frame">
+      <div class="board-square">
+        <div class="board-inner" id="board" role="group" aria-label="数独棋盘"></div>
+      </div>
+    </div>
+    <p id="status" class="status" aria-live="polite">正在准备…</p>
+    <div class="sudoku-dock">
+      <div class="tools">
+        <button type="button" id="notes" aria-pressed="false">笔记</button>
+        <button type="button" id="undo">撤销</button>
+        <button type="button" id="clear">清除</button>
+        <button type="button" id="mistakes" aria-pressed="true" aria-label="标出填错的数字">标错</button>
+      </div>
+      <div class="pad" id="pad"></div>
+    </div>
+  </main>
+
+  <div id="loading" class="overlay" hidden>
+    <div class="modal-card" role="status">
+      <p>正在出题…</p>
+    </div>
+  </div>
+
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <svg class="flower" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="22" r="8" fill="#f7b7c8"/>
+        <circle cx="20" cy="32" r="8" fill="#f3c2d4"/>
+        <circle cx="44" cy="32" r="8" fill="#f3c2d4"/>
+        <circle cx="26" cy="44" r="8" fill="#f7b7c8"/>
+        <circle cx="38" cy="44" r="8" fill="#f7b7c8"/>
+        <circle cx="32" cy="33" r="6" fill="#f6d98a"/>
+      </svg>
+      <h2 id="modal-title"></h2>
+      <p id="modal-body"></p>
+      <div class="modal-actions" id="modal-actions">
+        <button type="button" id="modal-cancel"></button>
+        <button type="button" id="modal-ok"></button>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./js/sudoku.js"></script>
+</body>
+</html>

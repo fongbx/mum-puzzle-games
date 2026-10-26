@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3b7c6">
+  <meta name="description" content="看图学词。看图片，听读音，可以离线学。">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="小游戏">
+  <title>看图学词 · 妈妈的小游戏</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="./icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./css/app.css">
+  <script src="./js/boot.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">跳到内容</a>
+  <main id="main" class="app wc-app" tabindex="-1">
+    <p id="old-browser" hidden>这个浏览器太旧了，请用 Chrome 打开。</p>
+    <header class="topbar">
+      <a class="back" id="back" href="./english.html">返回</a>
+      <h1>看图学词</h1>
+      <button id="contrast" type="button" aria-pressed="false">对比</button>
+    </header>
+
+    <p id="load-error" class="banner" hidden>词卡没有读出来。请再打开一次这个页面。</p>
+
+    <section id="home-view">
+      <p class="help">看图片，听读音。<br><span lang="en">Look at the picture. Listen to the word.</span></p>
+      <button type="button" id="review" class="wc-review">
+        <span class="game-zh">今日复习</span>
+        <span class="game-en" lang="en">Review today</span>
+      </button>
+      <p id="review-note" class="wc-note"></p>
+      <div id="packs"></div>
+      <button type="button" id="to-credits" class="wc-credit-link">图片和读音来自 Word Atlas · CC BY 4.0</button>
+    </section>
+
+    <section id="card-view" hidden>
+      <p class="filled" id="card-kicker"></p>
+      <div id="card-pic"></div>
+      <p class="wc-word" id="card-word" lang="en"></p>
+      <button type="button" id="card-play" class="wc-play" aria-label="播放">▶</button>
+      <p class="wc-play-label"><span>播放</span> <span lang="en">Play</span></p>
+      <p class="wc-zh" id="card-zh"></p>
+      <p class="wc-ex" id="card-ex" lang="en"></p>
+      <p class="wc-ex-zh" id="card-ex-zh"></p>
+      <button type="button" id="known" class="wc-known" aria-pressed="false"></button>
+      <p class="help">左右滑动也可以<br><span lang="en">You can swipe too.</span></p>
+      <div class="tools wc-tools">
+        <button type="button" id="prev"><span>上一个</span><span lang="en">Previous</span></button>
+        <button type="button" id="next"><span>下一个</span><span lang="en">Next</span></button>
+      </div>
+      <div class="tools">
+        <button type="button" id="to-picture"><span>看图选词</span><span lang="en">See and choose</span></button>
+        <button type="button" id="to-audio"><span>听音选图</span><span lang="en">Hear and choose</span></button>
+      </div>
+    </section>
+
+    <section id="game-view" hidden>
+      <p class="filled" id="game-kicker"></p>
+      <p class="wc-q" id="game-count"></p>
+      <div id="game-prompt"></div>
+      <div id="game-options"></div>
+      <p class="feedback" id="game-feedback" aria-live="polite"></p>
+      <button type="button" id="game-next" class="wc-next" hidden></button>
+    </section>
+
+    <section id="credits-view" hidden>
+      <div class="wc-credits">
+        <p class="wc-zh">图片、单词读音和词表来自 Word Atlas 的贡献者（词光），许可是 CC BY 4.0。</p>
+        <p lang="en">Pictures, word recordings and word list: Word Atlas contributors (词光), CC BY 4.0, <a href="https://github.com/designfuchen/word-atlas">https://github.com/designfuchen/word-atlas</a></p>
+        <p>例句和中文意思是为这个应用改写的，只用了词表里的一部分词。例句没有录音。</p>
+        <p lang="en">The example sentences and Chinese meanings were rewritten for this app. Only a subset of the Word Atlas words is used. The example sentences have no recording.</p>
+        <p>星期、数字、看病与药、本地生活这四组的图片和读音是为本应用做的，不是来自 Word Atlas。</p>
+        <p lang="en">Pictures and recordings for Days, Numbers, At the Clinic, and Around Singapore were made for this app. They are not from Word Atlas.</p>
+        <p>这些内容有人工智能参与，可能会有错。</p>
+        <p lang="en">This content was made with AI, so mistakes may exist.</p>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="./js/wordcards.js"></script>
+</body>
+</html>

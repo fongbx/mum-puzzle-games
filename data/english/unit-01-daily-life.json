@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "units": [
+    {
+      "id": "u01",
+      "title": "Everyday Singapore",
+      "titleChinese": "新加坡日常生活",
+      "level": "elementary",
+      "lessons": [
+        {
+          "id": "u01-l01",
+          "title": "At the hawker centre",
+          "titleChinese": "在小贩中心",
+          "vocab": [
+            {"id": "v-takeaway", "english": "takeaway", "chinese": "打包", "audioHint": "TAKE-a-way", "exampleSentence": "One chicken rice, takeaway please.", "exampleChinese": "一份鸡饭，打包，谢谢。"},
+            {"id": "v-eat-here", "english": "eat here", "chinese": "在这里吃", "audioHint": "eet HEER", "exampleSentence": "Two bowls of noodles, eat here.", "exampleChinese": "两碗面，在这里吃。"},
+            {"id": "v-less-sugar", "english": "less sugar", "chinese": "少糖", "audioHint": "less SHU-gar", "exampleSentence": "One coffee, less sugar please.", "exampleChinese": "一杯咖啡，少糖，谢谢。"},
+            {"id": "v-not-spicy", "english": "not spicy", "chinese": "不辣", "audioHint": "not SPY-see", "exampleSentence": "Can I have it not spicy?", "exampleChinese": "可以不要辣吗？"},
+            {"id": "v-how-much", "english": "How much is it?", "chinese": "多少钱？", "audioHint": "how MUCH iz it", "exampleSentence": "Excuse me, how much is it?", "exampleChinese": "请问，多少钱？"}
+          ],
+          "exercises": [
+            {"id": "u01-l01-e1", "type": "multipleChoice", "prompt": "打包", "promptLanguage": "chinese", "options": ["takeaway", "eat here", "less sugar", "not spicy"], "answer": "takeaway"},
+            {"id": "u01-l01-e2", "type": "multipleChoice", "prompt": "You want to know the price. What do you say?", "promptChinese": "你想知道价钱，要怎么说？", "promptLanguage": "english", "options": ["How much is it?", "Eat here", "Less sugar", "Not spicy"], "answer": "How much is it?"},
+            {"id": "u01-l01-e3", "type": "matchPairs", "pairs": [["takeaway", "打包"], ["eat here", "在这里吃"], ["less sugar", "少糖"], ["not spicy", "不辣"]]},
+            {"id": "u01-l01-e4", "type": "fillIn", "sentence": "One coffee, ___ sugar please.", "sentenceChinese": "一杯咖啡，少糖，谢谢。", "options": ["less", "much", "here"], "answer": "less"},
+            {"id": "u01-l01-e5", "type": "fillIn", "sentence": "One chicken rice, ___ please.", "sentenceChinese": "一份鸡饭，打包，谢谢。", "options": ["takeaway", "spicy", "how much"], "answer": "takeaway"}
+          ]
+        },
+        {
+          "id": "u01-l02",
+          "title": "Getting around",
+          "titleChinese": "搭车出行",
+          "vocab": [
+            {"id": "v-bus-stop", "english": "bus stop", "chinese": "巴士站", "audioHint": "BUS stop", "exampleSentence": "The bus stop is near the market.", "exampleChinese": "巴士站在巴刹附近。"},
+            {"id": "v-mrt-station", "english": "MRT station", "chinese": "地铁站", "audioHint": "em-ar-TEE STAY-shun", "exampleSentence": "Where is the MRT station?", "exampleChinese": "地铁站在哪里？"},
+            {"id": "v-turn-left", "english": "turn left", "chinese": "向左转", "audioHint": "turn LEFT", "exampleSentence": "Walk straight, then turn left.", "exampleChinese": "直走，然后向左转。"},
+            {"id": "v-turn-right", "english": "turn right", "chinese": "向右转", "audioHint": "turn RITE", "exampleSentence": "Turn right at the traffic light.", "exampleChinese": "在红绿灯向右转。"},
+            {"id": "v-which-bus", "english": "Which bus goes to …?", "chinese": "哪一辆巴士去……？", "audioHint": "witch BUS gohz too", "exampleSentence": "Which bus goes to the hospital?", "exampleChinese": "哪一辆巴士去医院？"}
+          ],
+          "exercises": [
+            {"id": "u01-l02-e1", "type": "multipleChoice", "prompt": "地铁站", "promptLanguage": "chinese", "options": ["bus stop", "MRT station", "turn left", "turn right"], "answer": "MRT station"},
+            {"id": "u01-l02-e2", "type": "multipleChoice", "prompt": "turn right", "promptLanguage": "english", "options": ["向左转", "向右转", "直走", "巴士站"], "answer": "向右转"},
+            {"id": "u01-l02-e3", "type": "matchPairs", "pairs": [["bus stop", "巴士站"], ["MRT station", "地铁站"], ["turn left", "向左转"], ["turn right", "向右转"]]},
+            {"id": "u01-l02-e4", "type": "fillIn", "sentence": "Which bus ___ to the hospital?", "sentenceChinese": "哪一辆巴士去医院？", "options": ["goes", "turn", "stop"], "answer": "goes"},
+            {"id": "u01-l02-e5", "type": "fillIn", "sentence": "Walk straight, then turn ___.", "sentenceChinese": "直走，然后向左转。", "options": ["left", "bus", "station"], "answer": "left"}
+          ]
+        },
+        {
+          "id": "u01-l03",
+          "title": "At the clinic",
+          "titleChinese": "看医生",
+          "vocab": [
+            {"id": "v-appointment", "english": "appointment", "chinese": "预约", "audioHint": "a-POINT-ment", "exampleSentence": "I have an appointment at 10 o'clock.", "exampleChinese": "我十点有预约。"},
+            {"id": "v-headache", "english": "headache", "chinese": "头痛", "audioHint": "HED-ake", "exampleSentence": "I have a headache.", "exampleChinese": "我头痛。"},
+            {"id": "v-fever", "english": "fever", "chinese": "发烧", "audioHint": "FEE-ver", "exampleSentence": "My grandson has a fever.", "exampleChinese": "我的孙子发烧了。"},
+            {"id": "v-medicine", "english": "medicine", "chinese": "药", "audioHint": "MED-ih-sin", "exampleSentence": "Take this medicine after meals.", "exampleChinese": "饭后吃这个药。"},
+            {"id": "v-it-hurts-here", "english": "It hurts here.", "chinese": "这里痛。", "audioHint": "it HURTS heer", "exampleSentence": "Doctor, it hurts here.", "exampleChinese": "医生，这里痛。"}
+          ],
+          "exercises": [
+            {"id": "u01-l03-e1", "type": "multipleChoice", "prompt": "发烧", "promptLanguage": "chinese", "options": ["headache", "fever", "medicine", "appointment"], "answer": "fever"},
+            {"id": "u01-l03-e2", "type": "multipleChoice", "prompt": "You want to show the doctor where the pain is. What do you say?", "promptChinese": "你想告诉医生哪里痛，要怎么说？", "promptLanguage": "english", "options": ["It hurts here.", "I have an appointment.", "Take this medicine.", "How much is it?"], "answer": "It hurts here."},
+            {"id": "u01-l03-e3", "type": "matchPairs", "pairs": [["appointment", "预约"], ["headache", "头痛"], ["fever", "发烧"], ["medicine", "药"]]},
+            {"id": "u01-l03-e4", "type": "fillIn", "sentence": "I have an ___ at 10 o'clock.", "sentenceChinese": "我十点有预约。", "options": ["appointment", "medicine", "fever"], "answer": "appointment"},
+            {"id": "u01-l03-e5", "type": "fillIn", "sentence": "Take this ___ after meals.", "sentenceChinese": "饭后吃这个药。", "options": ["medicine", "headache", "bus"], "answer": "medicine"}
+          ]
+        }
+      ]
+    }
+  ]
+}
