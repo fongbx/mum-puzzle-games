@@ -5,6 +5,7 @@ export const KEYS = {
   sudoku: 'mum.sudoku.game',
   stats: 'mum.sudoku.stats',
   english: 'mum.english.progress',
+  wordcards: 'mum.wordcards.progress',
   blocks: 'mum.blocks.game',
   chengyu: 'mum.chengyu.progress',
 };
