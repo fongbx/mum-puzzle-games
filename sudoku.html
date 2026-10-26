@@ -19,7 +19,7 @@
 </head>
 <body>
   <a class="skip" href="#main">跳到内容</a>
-  <main id="main" class="app" tabindex="-1">
+  <main id="main" class="app sudoku-app" tabindex="-1">
     <p id="old-browser" hidden>这个浏览器太旧了，请用 Chrome 打开。</p>
     <header class="topbar">
       <a class="back" href="./index.html">返回</a>
@@ -42,13 +42,15 @@
       </div>
     </div>
     <p id="status" class="status" aria-live="polite">正在准备…</p>
-    <div class="tools">
-      <button type="button" id="notes" aria-pressed="false">笔记</button>
-      <button type="button" id="undo">撤销</button>
-      <button type="button" id="clear">清除</button>
-      <button type="button" id="mistakes" aria-pressed="true" aria-label="标出填错的数字">标错</button>
+    <div class="sudoku-dock">
+      <div class="tools">
+        <button type="button" id="notes" aria-pressed="false">笔记</button>
+        <button type="button" id="undo">撤销</button>
+        <button type="button" id="clear">清除</button>
+        <button type="button" id="mistakes" aria-pressed="true" aria-label="标出填错的数字">标错</button>
+      </div>
+      <div class="pad" id="pad"></div>
     </div>
-    <div class="pad" id="pad"></div>
   </main>
 
   <div id="loading" class="overlay" hidden>

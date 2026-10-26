@@ -1,14 +1,16 @@
 import {
   SIZE,
+  anchorCovering,
   anyPieceFits,
-  canPlace,
   cellIndex,
   clearLines,
   clonePieces,
   dealPieces,
   emptyGrid,
   lineScore,
+  pieceSpan,
   place,
+  snapAnchor,
 } from './blocks-core.js';
 import { KEYS, bindContrast, readJson, writeJson } from './settings.js';
 import './pwa.js';
@@ -53,6 +55,7 @@ const drag = {
 };
 let suppressClick = false;
 let overTimer = 0;
+let motionTimer = 0;
 
 for (let i = 0; i < SIZE * SIZE; i++) {
   const btn = document.createElement('button');
@@ -65,16 +68,6 @@ for (let i = 0; i < SIZE * SIZE; i++) {
 
 function say(text) {
   statusEl.textContent = text;
-}
-
-function pieceSpan(cellsOfPiece) {
-  let rows = 1;
-  let cols = 1;
-  for (let i = 0; i < cellsOfPiece.length; i++) {
-    rows = Math.max(rows, cellsOfPiece[i][0] + 1);
-    cols = Math.max(cols, cellsOfPiece[i][1] + 1);
-  }
-  return { rows: rows, cols: cols };
 }
 
 function paintPiece(container, cellsOfPiece, color, cellPx) {
@@ -94,12 +87,16 @@ function paintPiece(container, cellsOfPiece, color, cellPx) {
   return span;
 }
 
-function paintBoard(popSet) {
+function paintBoard(extra) {
+  const source = extra && extra.grid ? extra.grid : state.grid;
+  const land = extra && extra.land;
+  const clearing = extra && extra.clearing;
   for (let i = 0; i < cells.length; i++) {
-    const value = state.grid[i];
+    const value = source[i];
     const el = cells[i];
     el.className = 'bcell' + (value ? ' filled c' + value : '');
-    if (popSet && popSet.has(i)) el.classList.add('pop');
+    if (land && land.has(i)) el.classList.add('land');
+    if (clearing && clearing.has(i)) el.classList.add('clearing');
     const row = Math.floor(i / SIZE) + 1;
     const col = (i % SIZE) + 1;
     el.setAttribute('aria-label', '第' + row + '行第' + col + '列，' + (value ? '有方块' : '空'));
@@ -108,7 +105,9 @@ function paintBoard(popSet) {
 
 function clearGhost() {
   for (let i = 0; i < cells.length; i++) {
-    cells[i].classList.remove('ghost', 'ghost-bad');
+    const el = cells[i];
+    el.classList.remove('ghost', 'ghost-bad');
+    if (!el.classList.contains('filled')) el.classList.remove('c1', 'c2', 'c3', 'c4', 'c5');
   }
 }
 
@@ -128,7 +127,7 @@ function paintTray() {
       btn.setAttribute('aria-label', '这个方块已经放下了');
     } else {
       const span = pieceSpan(piece.cells);
-      const cellPx = Math.max(11, Math.min(30, Math.floor((slotWidth - 20 - (span.cols - 1) * 3) / span.cols)));
+      const cellPx = Math.max(16, Math.min(36, Math.floor((slotWidth - 10 - (span.cols - 1) * 3) / span.cols)));
       btn.setAttribute('aria-label', '方块 ' + (i + 1) + '，' + piece.cells.length + ' 格');
       if (state.selected === i) btn.classList.add('selected');
       const mini = document.createElement('span');
@@ -146,8 +145,8 @@ function paintScores() {
   undoBtn.disabled = !state.undo || state.busy;
 }
 
-function render(popSet) {
-  paintBoard(popSet);
+function render(extra) {
+  paintBoard(extra);
   paintTray();
   paintScores();
 }
@@ -248,35 +247,56 @@ function showOver() {
   });
 }
 
-function finishMove(popSet) {
+function prefersStill() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function stopMotion() {
+  window.clearTimeout(motionTimer);
+  window.clearTimeout(overTimer);
+  state.busy = false;
+  hideFloat();
+}
+
+function freshCells(piece, row, col) {
+  const marks = new Set();
+  for (let i = 0; i < piece.cells.length; i++) {
+    marks.add(cellIndex(row + piece.cells[i][0], col + piece.cells[i][1]));
+  }
+  return marks;
+}
+
+function afterMove() {
   state.selected = null;
   state.over = !anyPieceFits(state.grid, state.pieces);
   if (state.score > state.best) state.best = state.score;
   persist();
-  render(popSet);
-  if (state.over) {
-    say('没有空位了');
-    window.clearTimeout(overTimer);
-    overTimer = window.setTimeout(showOver, popSet ? 220 : 0);
-  }
+  paintScores();
+}
+
+function showOverSoon() {
+  window.clearTimeout(overTimer);
+  if (!state.over) return;
+  overTimer = window.setTimeout(showOver, prefersStill() ? 0 : 280);
 }
 
 function commit(index, row, col) {
   if (state.over || state.busy) return false;
   const piece = state.pieces[index];
   if (!piece || piece.used) return false;
-  if (!canPlace(state.grid, piece.cells, row, col)) {
+  const placed = place(state.grid, piece.cells, row, col, piece.color);
+  if (!placed) {
     say('这里放不下');
     return false;
   }
   state.undo = snapshot();
-  const placed = place(state.grid, piece.cells, row, col, piece.color);
   const cleared = clearLines(placed);
   const lines = cleared.rows.length + cleared.cols.length;
-  const pop = new Set();
+  const fresh = freshCells(piece, row, col);
+  const clearing = new Set();
   if (lines) {
     for (let i = 0; i < SIZE * SIZE; i++) {
-      if (placed[i] && !cleared.grid[i]) pop.add(i);
+      if (placed[i] && !cleared.grid[i]) clearing.add(i);
     }
   }
   state.grid = cleared.grid;
@@ -285,14 +305,32 @@ function commit(index, row, col) {
   if (state.pieces.every(function (item) { return item.used; })) {
     state.pieces = dealPlayable();
   }
-  say(clearMessage(lines));
-  finishMove(lines ? pop : null);
+  afterMove();
+  say(state.over && !lines ? '没有空位了' : clearMessage(lines));
+  paintTray();
+  const landed = new Set();
+  fresh.forEach(function (i) {
+    if (!clearing.has(i)) landed.add(i);
+  });
+  if (lines && !prefersStill()) {
+    state.busy = true;
+    paintBoard({ grid: placed, clearing: clearing, land: landed });
+    paintScores();
+    motionTimer = window.setTimeout(function () {
+      state.busy = false;
+      render();
+      showOverSoon();
+    }, 360);
+  } else {
+    render({ land: landed });
+    showOverSoon();
+  }
   return true;
 }
 
 function undo() {
   if (!state.undo || state.busy) return;
-  window.clearTimeout(overTimer);
+  stopMotion();
   const prev = state.undo;
   state.grid = prev.grid.slice();
   state.pieces = clonePieces(prev.pieces);
@@ -307,7 +345,7 @@ function undo() {
 }
 
 function startNew() {
-  window.clearTimeout(overTimer);
+  stopMotion();
   closeModal();
   state.grid = emptyGrid();
   state.pieces = dealPlayable();
@@ -315,7 +353,7 @@ function startNew() {
   state.over = false;
   state.undo = null;
   state.selected = null;
-  say('点一个方块，再点棋盘');
+  say('按住方块，拖到棋盘上');
   persist();
   render();
 }
@@ -360,98 +398,214 @@ function boardMetrics() {
   };
 }
 
-function showGhost(row, col, cellsOfPiece, ok) {
+function showGhost(row, col, cellsOfPiece, color) {
   clearGhost();
   for (let i = 0; i < cellsOfPiece.length; i++) {
     const r = row + cellsOfPiece[i][0];
     const c = col + cellsOfPiece[i][1];
     if (r < 0 || c < 0 || r >= SIZE || c >= SIZE) continue;
-    cells[cellIndex(r, c)].classList.add(ok ? 'ghost' : 'ghost-bad');
+    const el = cells[cellIndex(r, c)];
+    el.classList.add('ghost', 'c' + color);
   }
 }
 
 function hideFloat() {
   floatEl.hidden = true;
+  floatEl.classList.remove('settling');
   floatEl.replaceChildren();
+  floatEl.style.transform = '';
   clearGhost();
+  if (drag.slot) drag.slot.classList.remove('lifting');
+  document.documentElement.classList.remove('is-dragging');
   drag.active = false;
   drag.index = -1;
+  drag.snapped = null;
+  drag.slot = null;
 }
 
-function moveFloat(clientX, clientY) {
-  const piece = state.pieces[drag.index];
-  if (!piece) return;
-  const metrics = boardMetrics();
-  if (!(metrics.cell > 0) || !(metrics.stepX > 0)) return;
-  const span = paintPiece(floatEl, piece.cells, piece.color, metrics.cell);
+function floatBox(span, cell) {
   const gap = 3;
-  const width = span.cols * metrics.cell + (span.cols - 1) * gap;
-  const height = span.rows * metrics.cell + (span.rows - 1) * gap;
-  floatEl.hidden = false;
-  floatEl.style.width = width + 'px';
-  floatEl.style.height = height + 'px';
-  floatEl.style.left = (clientX - width / 2) + 'px';
-  floatEl.style.top = (clientY - height / 2 - 28) + 'px';
-  const rect = floatEl.getBoundingClientRect();
-  const col = Math.round((rect.left - metrics.originX) / metrics.stepX);
-  const row = Math.round((rect.top - metrics.originY) / metrics.stepY);
-  const ok = canPlace(state.grid, piece.cells, row, col);
-  showGhost(row, col, piece.cells, ok);
-  drag.row = row;
-  drag.col = col;
-  drag.ok = ok;
+  return {
+    width: span.cols * cell + (span.cols - 1) * gap,
+    height: span.rows * cell + (span.rows - 1) * gap,
+  };
+}
+
+function moveFloat(clientX, clientY, scale) {
+  const box = floatBox(drag.span, drag.metrics.cell);
+  const lift = 58;
+  const x = Math.round(clientX - box.width / 2);
+  const y = Math.round(clientY - box.height - lift);
+  floatEl.style.width = box.width + 'px';
+  floatEl.style.height = box.height + 'px';
+  floatEl.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) scale(' + scale + ')';
+}
+
+function aimAnchor(clientX, clientY) {
+  const metrics = drag.metrics;
+  const col = (clientX - metrics.originX - metrics.cell / 2) / metrics.stepX;
+  const row = (clientY - metrics.originY - metrics.cell / 2) / metrics.stepY;
+  return {
+    row: row - (drag.span.rows - 1) / 2,
+    col: col - (drag.span.cols - 1) / 2,
+  };
+}
+
+function followFinger(clientX, clientY) {
+  const piece = state.pieces[drag.index];
+  if (!piece || !drag.metrics || !(drag.metrics.stepX > 0)) return;
+  moveFloat(clientX, clientY, 1.04);
+  const aim = aimAnchor(clientX, clientY);
+  const snapped = snapAnchor(state.grid, piece.cells, aim.row, aim.col);
+  drag.snapped = snapped;
+  if (snapped) showGhost(snapped.row, snapped.col, piece.cells, piece.color);
+  else clearGhost();
+}
+
+function slideFloatTo(x, y, scale, ms, done) {
+  if (prefersStill()) {
+    done();
+    return;
+  }
+  floatEl.classList.add('settling');
+  void floatEl.offsetWidth;
+  floatEl.style.transform = 'translate3d(' + Math.round(x) + 'px,' + Math.round(y) + 'px,0) scale(' + scale + ')';
+  motionTimer = window.setTimeout(done, ms);
+}
+
+function springHome() {
+  drag.active = false;
+  const slot = drag.slot;
+  const rect = slot ? slot.getBoundingClientRect() : null;
+  const box = floatBox(drag.span, drag.metrics.cell);
+  state.busy = true;
+  if (!rect) {
+    hideFloat();
+    state.busy = false;
+    return;
+  }
+  slideFloatTo(
+    rect.left + (rect.width - box.width) / 2,
+    rect.top + (rect.height - box.height) / 2,
+    0.94,
+    280,
+    function () {
+      hideFloat();
+      state.busy = false;
+      paintScores();
+    }
+  );
+}
+
+function settleOntoBoard(index, snapped) {
+  drag.active = false;
+  const metrics = drag.metrics;
+  state.busy = true;
+  slideFloatTo(
+    metrics.originX + snapped.col * metrics.stepX,
+    metrics.originY + snapped.row * metrics.stepY,
+    1,
+    180,
+    function () {
+      hideFloat();
+      state.busy = false;
+      commit(index, snapped.row, snapped.col);
+    }
+  );
 }
 
 boardEl.addEventListener('click', function (event) {
   const btn = event.target.closest('.bcell');
-  if (!btn || state.over || state.busy) return;
+  if (!btn || state.over || state.busy || !modalEl.hidden) return;
   if (state.selected == null) {
     say('先点下面的一个方块');
     return;
   }
   const index = Number(btn.dataset.i);
-  commit(state.selected, Math.floor(index / SIZE), index % SIZE);
+  const row = Math.floor(index / SIZE);
+  const col = index % SIZE;
+  const piece = state.pieces[state.selected];
+  const spot = piece && anchorCovering(state.grid, piece.cells, row, col);
+  if (!spot) {
+    say('这里放不下');
+    return;
+  }
+  commit(state.selected, spot.row, spot.col);
 });
 
 trayEl.addEventListener('pointerdown', function (event) {
-  suppressClick = false;
+  if (!modalEl.hidden || state.over || state.busy) return;
   const btn = event.target.closest('.slot');
-  if (!btn || btn.disabled || state.over || state.busy) return;
-  drag.index = Number(btn.dataset.index);
+  if (!btn || btn.disabled) return;
+  suppressClick = false;
+  window.clearTimeout(motionTimer);
+  hideFloat();
+  const index = Number(btn.dataset.index);
+  const piece = state.pieces[index];
+  if (!piece || piece.used) return;
+  const metrics = boardMetrics();
+  if (!(metrics.cell > 0) || !(metrics.stepX > 0)) return;
+  drag.index = index;
   drag.pointerId = event.pointerId;
   drag.startX = event.clientX;
   drag.startY = event.clientY;
   drag.moved = false;
   drag.active = true;
+  drag.snapped = null;
+  drag.slot = btn;
+  drag.metrics = metrics;
+  drag.span = pieceSpan(piece.cells);
   btn.setPointerCapture(event.pointerId);
 });
 
-trayEl.addEventListener('pointermove', function (event) {
+window.addEventListener('pointermove', function (event) {
   if (!drag.active || event.pointerId !== drag.pointerId) return;
   const dx = event.clientX - drag.startX;
   const dy = event.clientY - drag.startY;
-  if (!drag.moved && dx * dx + dy * dy < 14 * 14) return;
-  drag.moved = true;
+  if (!drag.moved && dx * dx + dy * dy < 10 * 10) return;
+  if (!drag.moved) {
+    drag.moved = true;
+    document.documentElement.classList.add('is-dragging');
+    drag.slot.classList.add('lifting');
+    trayEl.querySelectorAll('.slot.selected').forEach(function (el) {
+      el.classList.remove('selected');
+      el.setAttribute('aria-pressed', 'false');
+    });
+    state.selected = null;
+    const piece = state.pieces[drag.index];
+    floatEl.classList.remove('settling');
+    floatEl.hidden = false;
+    paintPiece(floatEl, piece.cells, piece.color, drag.metrics.cell);
+  }
   if (event.cancelable) event.preventDefault();
-  moveFloat(event.clientX, event.clientY);
+  followFinger(event.clientX, event.clientY);
 }, { passive: false });
 
-trayEl.addEventListener('pointerup', function (event) {
-  if (!drag.active || event.pointerId !== drag.pointerId) return;
+function endDrag(event) {
+  if (!drag.active || (event && event.pointerId !== drag.pointerId)) return;
   const moved = drag.moved;
   const index = drag.index;
-  const row = drag.row;
-  const col = drag.col;
-  const ok = drag.ok;
-  hideFloat();
-  if (!moved) return;
+  const snapped = drag.snapped;
+  if (!moved) {
+    hideFloat();
+    return;
+  }
   suppressClick = true;
-  if (ok) commit(index, row, col);
-  else say('这里放不下');
-});
+  if (snapped) settleOntoBoard(index, snapped);
+  else {
+    say('这里放不下');
+    springHome();
+  }
+}
 
-trayEl.addEventListener('pointercancel', function () {
-  hideFloat();
+window.addEventListener('pointerup', endDrag);
+window.addEventListener('pointercancel', function () {
+  if (!drag.active) return;
+  if (drag.moved) {
+    suppressClick = true;
+    say('这里放不下');
+    springHome();
+  } else hideFloat();
 });
 
 trayEl.addEventListener('click', function (event) {
@@ -487,7 +641,7 @@ function load() {
     } : null;
     state.over = !!saved.over || !anyPieceFits(state.grid, state.pieces);
     if (state.score > state.best) state.best = state.score;
-    say(state.over ? '没有空位了' : (state.score > 0 ? '继续上次的一局' : '点一个方块，再点棋盘'));
+    say(state.over ? '没有空位了' : (state.score > 0 ? '继续上次的一局' : '按住方块，拖到棋盘上'));
     render();
     if (state.over) showOver();
     return;
@@ -497,7 +651,7 @@ function load() {
   state.score = 0;
   state.over = false;
   state.undo = null;
-  say('点一个方块，再点棋盘');
+  say('按住方块，拖到棋盘上');
   persist();
   render();
 }
